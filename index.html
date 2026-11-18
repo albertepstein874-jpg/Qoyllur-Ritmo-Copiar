@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0c10">
+  <meta name="description" content="Aprende danzas y músicas del Perú con lecciones breves, actividades y una ruta cultural interactiva.">
+  <title>Qoyllur Ritmo — Aprende cultura peruana</title>
+  <link rel="preconnect" href="https://ich.unesco.org">
+  <link rel="preconnect" href="https://commons.wikimedia.org">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/content.js" defer></script>
+  <script src="js/script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Saltar al contenido</a>
+  <div class="app-shell">
+    <button class="mobile-menu-toggle" id="mobile-menu-toggle" type="button" aria-label="Abrir menú" aria-expanded="false">☰</button>
+    <div class="sidebar-backdrop" id="sidebar-backdrop" hidden></div>
+    <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+      <a class="brand" href="#inicio" data-nav="inicio" aria-label="Qoyllur Ritmo, ir al inicio">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 72 42" focusable="false"><path class="mountain-back" d="M3 34 25 7l11 13L47 4l22 30H3Z"/><path class="mountain-front" d="m14 34 13-17 9 11 9-14 15 20H14Z"/><path class="mountain-snow" d="m25 7 7 8-5-1-5 7-4-3L25 7Zm22-3 9 13-7-4-6 8-5-3 9-14Z"/><path class="mountain-red" d="M8 37c13-5 30-5 53 0"/></svg></span>
+        <span class="brand-name">Qoyllur<span>Ritmo</span></span>
+      </a>
+      <p class="sidebar-label">TU ESPACIO DE APRENDIZAJE</p>
+      <nav class="primary-nav" id="primary-nav" aria-label="Secciones de aprendizaje">
+        <button class="nav-item is-active" type="button" data-nav="inicio" aria-label="Inicio" title="Inicio"><span class="nav-icon" aria-hidden="true">⌂</span><span>Inicio</span></button>
+        <div class="nav-group nav-area-group" id="nav-area-group" aria-label="Áreas con lecciones disponibles">
+          <button class="nav-item" type="button" data-nav="danzas" aria-label="Danzas del Perú" title="Danzas del Perú"><span class="nav-icon" aria-hidden="true">✺</span><span>Danzas del Perú</span><span class="nav-count">3</span></button>
+          <button class="nav-item" type="button" data-nav="musica" aria-label="Música peruana" title="Música peruana"><span class="nav-icon" aria-hidden="true">♫</span><span>Música peruana</span><span class="nav-count">3</span></button>
+        </div>
+        <div class="nav-group nav-expansion-group" id="nav-expansion-group" aria-label="Más áreas culturales">
+          <button class="nav-item" type="button" data-nav="gastronomia" aria-label="Gastronomía" title="Gastronomía"><span class="nav-icon" aria-hidden="true">◉</span><span>Gastronomía</span></button>
+          <button class="nav-item" type="button" data-nav="festividades" aria-label="Festividades" title="Festividades"><span class="nav-icon" aria-hidden="true">✧</span><span>Festividades</span></button>
+          <button class="nav-item" type="button" data-nav="patrimonio" aria-label="Patrimonio cultural" title="Patrimonio cultural"><span class="nav-icon" aria-hidden="true">⌂</span><span>Patrimonio cultural</span></button>
+          <button class="nav-item" type="button" data-nav="historia" aria-label="Historia y tradiciones" title="Historia y tradiciones"><span class="nav-icon" aria-hidden="true">◷</span><span>Historia y tradiciones</span></button>
+        </div>
+        <button class="nav-item" type="button" data-nav="jugar" aria-label="Retos y juegos" title="Retos y juegos"><span class="nav-icon" aria-hidden="true">✳</span><span>Retos y juegos</span></button>
+        <button class="nav-item" type="button" data-nav="liga" aria-label="Mi liga" title="Mi liga"><span class="nav-icon" aria-hidden="true">🏆</span><span>Mi liga</span></button>
+        <button class="nav-item" type="button" data-nav="progreso" aria-label="Mi progreso" title="Mi progreso"><span class="nav-icon" aria-hidden="true">◷</span><span>Mi progreso</span></button>
+      </nav>
+      <div class="sidebar-route">
+        <div class="mini-route-icon" aria-hidden="true">✦</div>
+        <p class="sidebar-label">RUTA ACTUAL</p>
+        <strong>Ritmos y pasos<br>del Perú</strong>
+        <div class="mini-progress"><span id="sidebar-progress-fill"></span></div>
+        <small id="sidebar-progress-label">0 de 6 lecciones</small>
+        <button class="text-link" type="button" data-nav="inicio">Ver mi ruta <span aria-hidden="true">→</span></button>
+      </div>
+      <div class="sidebar-footer"><span class="status-dot"></span> Tu avance se guarda en este dispositivo</div>
+    </aside>
+
+    <main id="main-content" class="main-content">
+      <header class="topbar">
+        <div class="breadcrumb sr-only" aria-live="polite"><span>Aprendizaje</span><span aria-hidden="true">/</span><strong id="current-page-label">Inicio</strong></div>
+        <div class="topbar-actions">
+          <button class="streak-pill" type="button" data-nav="liga" aria-label="Ver tu racha y actividad semanal"><span class="streak-pill-flame" aria-hidden="true">🔥</span><span class="streak-pill-copy"><small>Racha actual</small><strong><span id="top-streak">0</span> días</strong></span><span class="top-week-dots" id="top-week-dots" aria-hidden="true"></span></button>
+          <div class="battery-pill" aria-label="Baterías disponibles"><span aria-hidden="true">⚡</span><span id="battery-count">5</span><span class="battery-divider">/</span><span id="battery-cap">5</span><button id="battery-info" class="icon-button" type="button" aria-label="Información sobre baterías">?</button></div>
+          <button class="league-points-pill" type="button" data-nav="liga" aria-label="Ver puntos de Mi liga"><span aria-hidden="true">✦</span><strong id="top-points">0</strong><small>pts</small></button>
+          <button class="avatar" type="button" data-nav="progreso" aria-label="Abrir mi perfil y progreso"><span class="avatar-person" aria-hidden="true"></span></button>
+        </div>
+      </header>
+
+      <section class="view is-visible" id="view-inicio" data-view="inicio" aria-labelledby="home-title">
+        <section class="home-welcome" aria-labelledby="home-title"><img id="home-hero-photo" alt="Vista panorámica de Machu Picchu, en Cusco"><div class="home-welcome-shade"></div><div class="home-welcome-copy"><p class="eyebrow"><span class="eyebrow-line"></span> TU AVENTURA CULTURAL</p><h1 id="home-title">¡Bienvenido a Qoyllur Ritmo<span class="title-period">!</span></h1><p class="muted lead">Descubre, aprende y celebra nuestra cultura.</p><a class="home-hero-credit" id="home-hero-credit" href="https://commons.wikimedia.org/wiki/File:Machu_Picchu_panorama.jpg" target="_blank" rel="noopener noreferrer">Machu Picchu · Wikimedia Commons · CC BY 2.0</a></div><img class="home-flag-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Flag_in_Aguas_Calientes.jpg?width=500" alt="Bandera peruana ondeando en Aguas Calientes, Cusco" loading="lazy"><a class="home-flag-credit" href="https://commons.wikimedia.org/wiki/File:Flag_in_Aguas_Calientes.jpg" target="_blank" rel="noopener noreferrer">Bandera · EASLYHAKS · CC BY-SA 4.0</a></section>
+        <div class="home-overview-grid"><section class="panel streak-card home-streak-summary"><div class="panel-heading"><div><p class="eyebrow">TU RITMO</p><h2>Racha actual</h2></div><span class="streak-flame" aria-hidden="true">🔥</span></div><div class="streak-number"><strong id="home-streak">0</strong><span>días seguidos</span></div><p class="muted small home-streak-note">¡Sigue aprendiendo! Cada visita cuenta.</p><div class="week-calendar" id="home-week-calendar" aria-label="Actividad de esta semana"></div><div class="weekly-goal"><div><strong>Progreso semanal</strong><span id="home-week-count">0 de 4 días activos</span></div><div class="progress-bar"><span id="home-week-progress" style="width:0%"></span></div></div></section><section class="panel home-progress-card"><div class="panel-heading"><div><p class="eyebrow">TU CAMINO CULTURAL</p><h2>Mi progreso</h2></div><span class="home-progress-icon" aria-hidden="true">▥</span></div><strong class="home-progress-percent" id="home-progress-percent">0%</strong><p class="muted">de las seis lecciones completadas</p><div class="progress-bar"><span id="home-progress-fill" style="width:0%"></span></div><div class="home-progress-foot"><span id="home-progress-label">0 de 6</span><small id="home-best-score">Trivia pendiente · mejor resultado —/8</small></div></section></div>
+        <div class="section-heading"><div><p class="eyebrow">ELIGE TU CAMINO</p><h2>Áreas culturales</h2></div></div>
+        <div class="category-grid" id="home-categories"></div>
+        <div class="home-bottom-grid"><section class="home-recommendation-section"><div class="section-heading"><div><p class="eyebrow">UN PASO MÁS</p><h2>Actividad recomendada</h2></div></div><section class="panel home-recommendation-panel" id="home-recommendation-card" aria-live="polite"></section></section><button class="panel home-league-card" type="button" data-nav="liga"><span class="home-league-icon" aria-hidden="true">⚡</span><span class="home-league-copy"><small>MI LIGA · RETO SEMANAL</small><strong>Reto de la semana</strong><span>Completa 3 actividades · <b id="home-league-activities">0</b>/3</span><span class="progress-bar home-league-progress"><span id="home-league-progress-fill" style="width:0%"></span></span></span><span class="home-league-arrow" aria-hidden="true">→</span></button></div>
+      </section>
+
+      <section class="view area-view" id="view-danzas" data-view="danzas" aria-labelledby="danzas-title" hidden></section>
+      <section class="view area-view" id="view-musica" data-view="musica" aria-labelledby="musica-title" hidden></section>
+      <section class="view area-view" id="view-gastronomia" data-view="gastronomia" aria-labelledby="gastronomia-title" hidden></section>
+      <section class="view area-view" id="view-festividades" data-view="festividades" aria-labelledby="festividades-title" hidden></section>
+      <section class="view area-view" id="view-patrimonio" data-view="patrimonio" aria-labelledby="patrimonio-title" hidden></section>
+      <section class="view area-view" id="view-historia" data-view="historia" aria-labelledby="historia-title" hidden></section>
+
+      <section class="view" id="view-explorar" data-view="explorar" aria-labelledby="explore-title" hidden>
+        <div class="page-intro"><p class="eyebrow"><span class="eyebrow-line"></span> CONTENIDO EDUCATIVO</p><h1 id="explore-title">Explora el Perú<span class="title-period">.</span></h1><p class="muted lead">Elige un tema y sigue la ruta a tu propio ritmo.</p></div>
+        <div class="explore-toolbar"><div class="filter-tabs" role="group" aria-label="Filtrar lecciones"><button class="filter-tab is-selected" type="button" data-filter="all" aria-pressed="true">Todas <span>6</span></button><button class="filter-tab" type="button" data-filter="danzas" aria-pressed="false">Danzas <span>3</span></button><button class="filter-tab" type="button" data-filter="musica" aria-pressed="false">Música <span>3</span></button></div><div class="route-legend"><span class="legend-dot completed"></span> Completada <span class="legend-dot"></span> Disponible <span class="legend-dot locked"></span> Sin energía</div></div>
+        <div class="explore-layout"><div class="lesson-groups" id="lesson-groups"></div><aside class="route-aside panel"><p class="eyebrow">MAPA DE APRENDIZAJE</p><h2>Tu ruta cultural</h2><p class="muted small">Sigue los nodos en orden o elige el tema que te llame la atención.</p><div class="route-track" id="explore-route"></div><div class="route-summary"><span class="route-summary-number" id="route-completed-count">0/6</span><span>lecciones completadas</span></div></aside></div>
+      </section>
+
+      <section class="view" id="view-jugar" data-view="jugar" aria-labelledby="game-title" hidden>
+        <div class="page-intro"><p class="eyebrow"><span class="eyebrow-line"></span> APRENDE JUGANDO</p><h1 id="game-title">Retos y juegos<span class="title-period">.</span></h1><p class="muted lead">Trivia completa y retos breves para conectar historias de distintas áreas del Perú.</p></div>
+        <section class="challenge-hub"><div class="section-heading"><div><p class="eyebrow">ELIGE UNA ACTIVIDAD</p><h2>Retos por área cultural</h2></div></div><div class="challenge-area-grid"><article class="panel challenge-area-card challenge-area-danzas"><div class="challenge-area-icon" aria-hidden="true">✺</div><div><p class="eyebrow">DANZAS DEL PERÚ</p><h3>Relaciona y comprueba</h3><p class="muted">Juego de asociación y reto de comprensión a partir de las tres lecciones.</p></div><div class="challenge-area-actions"><button class="button button-outline" type="button" data-open-practice="danzas">Jugar asociación</button><button class="text-link" type="button" data-area-quiz="danzas">Hacer el reto <span aria-hidden="true">→</span></button></div></article><article class="panel challenge-area-card challenge-area-musica"><div class="challenge-area-icon" aria-hidden="true">♫</div><div><p class="eyebrow">MÚSICA PERUANA</p><h3>Conecta música y conceptos</h3><p class="muted">Juego de asociación y reto breve basados en siku, cajón y Esuwa.</p></div><div class="challenge-area-actions"><button class="button button-outline" type="button" data-open-practice="musica">Jugar asociación</button><button class="text-link" type="button" data-area-quiz="musica">Hacer el reto <span aria-hidden="true">→</span></button></div></article></div></section>
+        <div class="section-heading trivia-section-title"><div><p class="eyebrow">RETO INTEGRADOR</p><h2>Trivia cultural · 8 preguntas</h2></div></div>
+        <div class="trivia-layout"><section class="trivia-card" id="trivia-card" aria-live="polite"></section><aside class="trivia-aside"><div class="panel best-score-panel"><div class="best-score-icon" aria-hidden="true">✦</div><p class="eyebrow">TU MEJOR RESULTADO</p><div class="best-score-number"><span id="best-score">—</span><small id="best-score-total">/ 8</small></div><p class="muted small">Se guarda en este dispositivo.</p></div><div class="panel trivia-tip"><span class="tip-icon" aria-hidden="true">✧</span><strong>Curiosidad antes que velocidad</strong><p class="muted small">Después de cada respuesta verás una explicación para seguir aprendiendo.</p></div></aside></div>
+      </section>
+
+      <section class="view" id="view-liga" data-view="liga" aria-labelledby="league-title" hidden>
+        <div class="page-intro"><p class="eyebrow"><span class="eyebrow-line"></span> TU PROPIA TEMPORADA</p><h1 id="league-title">Mi liga<span class="title-period">.</span></h1><p class="muted lead">Un espacio personal para celebrar tu constancia y lo que vas aprendiendo.</p></div>
+        <section class="league-hero panel"><div class="league-emblem" aria-hidden="true">✦</div><div><p class="eyebrow">SEMANA EN CURSO</p><h2>Tu liga cultural</h2><p class="muted">Sin rankings inventados: aquí compites contigo, a tu propio ritmo.</p></div><div class="league-week-pill" id="league-week-label">Esta semana</div></section>
+        <div class="league-stats"><article class="panel league-stat"><span class="league-stat-icon gold" aria-hidden="true">✧</span><div><small>Puntos de la semana</small><strong id="league-points">0</strong></div></article><article class="panel league-stat"><span class="league-stat-icon turquoise" aria-hidden="true">✓</span><div><small>Actividades completadas</small><strong id="league-activities">0</strong></div></article><article class="panel league-stat"><span class="league-stat-icon violet" aria-hidden="true">🔥</span><div><small>Días activos</small><strong id="league-active-days">0 <small>/ 4</small></strong></div></article></div>
+        <div class="league-columns"><section class="panel league-calendar-panel"><div class="panel-heading"><div><p class="eyebrow">TU SEMANA</p><h2>Un paso a la vez</h2></div><span class="streak-flame" aria-hidden="true">🔥</span></div><div class="week-calendar large" id="league-week-calendar"></div><div class="weekly-goal"><div><strong>Meta flexible</strong><span id="league-week-count">0 de 4 días activos</span></div><div class="progress-bar"><span id="league-week-progress" style="width:0%"></span></div></div><p class="gentle-note">Si hoy es día de pausa, tu camino te espera cuando quieras volver.</p></section><section class="panel community-placeholder"><p class="eyebrow">PRÓXIMAMENTE</p><div class="community-orbit" aria-hidden="true">◎</div><h2>Una comunidad por descubrir</h2><p class="muted">Cuando existan cuentas y un servicio en línea, este espacio podrá mostrar una clasificación comunitaria real. Por ahora, aquí solo aparece tu avance personal.</p><span class="community-status"><i></i> Liga personal activa</span></section></div>
+      </section>
+
+      <section class="view" id="view-progreso" data-view="progreso" aria-labelledby="progress-title" hidden>
+        <div class="page-intro"><p class="eyebrow"><span class="eyebrow-line"></span> TU CAMINO HASTA AHORA</p><h1 id="progress-title">Mi progreso<span class="title-period">.</span></h1><p class="muted lead">Cada paso cuenta. Aquí tienes un resumen de tus descubrimientos.</p></div>
+        <section class="panel progress-week"><div><p class="eyebrow">TU CONSTANCIA</p><h2><span aria-hidden="true">🔥</span> <span id="progress-streak">0</span> días de racha</h2><p class="muted small" id="progress-week-summary">0 de 4 días activos esta semana</p></div><div class="week-calendar" id="progress-week-calendar"></div></section>
+        <div class="stats-grid"><article class="stat-card"><span class="stat-icon clay" aria-hidden="true">✦</span><div><span class="stat-label">Lecciones completadas</span><strong class="stat-value" id="stat-lessons">0 <small>/ 6</small></strong></div></article><article class="stat-card"><span class="stat-icon gold" aria-hidden="true">◎</span><div><span class="stat-label">Mejor trivia</span><strong class="stat-value" id="stat-trivia">— <small>/ 8</small></strong></div></article><article class="stat-card"><span class="stat-icon blue" aria-hidden="true">⚡</span><div><span class="stat-label">Baterías disponibles</span><strong class="stat-value" id="stat-batteries">5 <small>/ 5</small></strong></div></article></div>
+        <div class="progress-columns"><section class="panel category-progress-panel"><div class="panel-heading"><div><p class="eyebrow">POR CATEGORÍA</p><h2>Lo que has explorado</h2></div></div><div id="category-progress-list"></div></section><section class="panel battery-panel"><div class="battery-panel-head"><div><p class="eyebrow">TU ENERGÍA</p><h2>Baterías de aprendizaje</h2></div><span class="big-bolt" aria-hidden="true">⚡</span></div><p class="muted">Las lecciones nuevas usan una batería al iniciarse. Cada lección se cobra una sola vez; puedes repetirla gratis.</p><div class="battery-meter" id="battery-meter"></div><p class="battery-timer" id="battery-timer"></p><button class="button button-outline button-full" id="ad-reward" type="button">＋ Recuperar con anuncio voluntario</button><p class="tiny muted">Opción de demostración; no se reproducen anuncios ni se recopilan datos.</p></section></div>
+        <section class="membership-section"><div class="section-heading"><div><p class="eyebrow">OPCIONES DE MEMBRESÍA</p><h2>Elige tu ritmo</h2><p class="muted small">Planes de demostración. No hay cobros ni se solicitan datos bancarios.</p></div><span class="demo-badge">DEMO</span></div><div class="membership-grid" id="membership-grid"></div></section>
+        <div class="reset-row"><div><strong>¿Quieres empezar de nuevo?</strong><p class="muted small">Se borrarán tus lecciones, resultados y baterías guardados en este navegador.</p></div><button class="button button-danger-ghost" id="reset-progress" type="button">Reiniciar mi progreso</button></div>
+        <section class="panel tutorial-settings"><div><p class="eyebrow">PRIMEROS PASOS</p><h2>¿Quieres volver a recorrer la guía?</h2><p class="muted small">Puedes abrir el tutorial cuando quieras para recordar cómo moverte por Qoyllur Ritmo.</p></div><button class="button button-outline" id="replay-tutorial" type="button">Volver a ver el tutorial</button></section>
+      </section>
+
+      <footer class="site-footer"><span>Qoyllur Ritmo <span class="footer-star">✦</span> Cultura viva, aprendizaje en movimiento.</span><button type="button" class="footer-link" data-nav="progreso">Tu progreso se guarda localmente</button></footer>
+    </main>
+  </div>
+
+  <nav class="mobile-nav" aria-label="Navegación rápida móvil"><button class="is-active" type="button" data-nav="inicio"><span aria-hidden="true">⌂</span><small>Inicio</small></button><button type="button" data-nav="danzas"><span aria-hidden="true">✺</span><small>Danzas</small></button><button type="button" data-nav="musica"><span aria-hidden="true">♫</span><small>Música</small></button><button type="button" data-nav="jugar"><span aria-hidden="true">✳</span><small>Retos</small></button></nav>
+
+  <dialog class="lesson-dialog" id="lesson-dialog" aria-labelledby="lesson-dialog-title"><div class="dialog-scroll" id="lesson-dialog-content"></div><button class="dialog-close" id="close-lesson" type="button" aria-label="Cerrar lección">×</button></dialog>
+  <dialog class="notice-dialog" id="notice-dialog"><div class="notice-icon" aria-hidden="true">✦</div><h2 id="notice-title">Un momento</h2><p id="notice-copy" class="muted"></p><button class="button button-dark" id="close-notice" type="button">Entendido</button></dialog>
+  <div class="tutorial-layer" id="tutorial-layer" hidden aria-hidden="true">
+    <div class="tutorial-blocker" data-tutorial-blocker></div>
+    <div class="tutorial-spotlight" id="tutorial-spotlight" aria-hidden="true"></div>
+    <section class="tutorial-card" id="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorial-title" aria-describedby="tutorial-copy">
+      <div class="tutorial-card-top"><span class="tutorial-step" id="tutorial-step"></span><button class="tutorial-skip" id="tutorial-skip" type="button">Saltar tutorial</button></div>
+      <div class="tutorial-progress" aria-hidden="true"><span id="tutorial-progress-fill"></span></div>
+      <p class="eyebrow">QOYLLUR RITMO · PRIMEROS PASOS</p><h2 id="tutorial-title"></h2><p id="tutorial-copy" class="muted"></p>
+      <div class="tutorial-actions"><button class="button button-dark" id="tutorial-next" type="button">Siguiente <span aria-hidden="true">→</span></button></div>
+    </section>
+  </div>
+  <div class="sr-only" id="live-announcer" aria-live="polite" aria-atomic="true"></div>
+</body>
+</html>
