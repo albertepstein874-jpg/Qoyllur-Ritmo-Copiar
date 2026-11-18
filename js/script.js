@@ -1,6 +1,7 @@
 (() => {
   'use strict';
   const content = window.QR_CONTENT;
+  const questionUtils = window.QR_QUESTION_UTILS;
   const STORAGE_KEY = 'qoyllur-ritmo-progress-v1';
   const TUTORIAL_KEY = 'qoyllur-ritmo-welcome-tour-v1';
   const REFILL_MS = 24 * 60 * 60 * 1000;
@@ -29,6 +30,7 @@
   let activeFilter = 'all';
   let quizSession = null;
   let dialogLesson = null;
+  let lessonOptionOrder = [];
   const matchSessions = { danzas: null, musica: null };
   const areaTabs = Object.fromEntries([...content.categories, ...futureAreas].map(area => [area.id, 'aprender']));
 
@@ -48,6 +50,14 @@
       state.batteries = Number.isFinite(state.batteries) ? state.batteries : 5;
       state.refillAt = Number.isFinite(state.refillAt) ? state.refillAt : null;
       state.lessonAnswers = state.lessonAnswers && typeof state.lessonAnswers === 'object' ? state.lessonAnswers : {};
+      // Las versiones previas guardaban índices y siempre situaban la respuesta correcta en 0.
+      Object.entries(state.lessonAnswers).forEach(([lessonId, answer]) => {
+        if (answer && typeof answer === 'object' && Number.isInteger(answer.selected)) {
+          const question = lessonMap[lessonId]?.question;
+          answer.selected = questionUtils.migrateLegacySelection(question, answer.selected);
+          if (answer.selected === null) answer.checked = false;
+        }
+      });
       state.activityLog = Array.isArray(state.activityLog) ? state.activityLog.filter(item => item && /^\d{4}-\d{2}-\d{2}$/.test(item.date) && typeof item.id === 'string' && Number.isFinite(item.points)).slice(-500) : [];
       return state;
     } catch { return freshState(); }
@@ -445,14 +455,14 @@
   function startQuiz(mode = 'main', category = null) {
     const questions = category ? content.trivia.filter(question => lessonMap[question.lesson]?.category === category) : mode === 'bonus' ? [content.trivia[1], content.trivia[4], content.trivia[6]] : content.trivia;
     if (!questions.length) return;
-    quizSession = { index: 0, score: 0, selected: null, answered: false, mode, category, activityId: category ? `area-quiz-${category}` : mode === 'bonus' ? 'bonus-quiz' : 'main-trivia', questions };
+    quizSession = { index: 0, score: 0, selected: null, answered: false, mode, category, activityId: category ? `area-quiz-${category}` : mode === 'bonus' ? 'bonus-quiz' : 'main-trivia', questions: questionUtils.prepareQuestions(questions) };
     renderQuizQuestion();
   }
   function renderQuizQuestion() {
     const q = quizSession.questions[quizSession.index];
     const total = quizSession.questions.length;
     const progress = (quizSession.index / total) * 100;
-    $('#trivia-card').innerHTML = `<div class="trivia-question"><div class="quiz-topline"><span class="eyebrow">${quizSession.mode === 'bonus' ? 'RETO RELÁMPAGO' : 'PREGUNTA'} ${String(quizSession.index + 1).padStart(2, '0')} <span class="muted">/ ${String(total).padStart(2, '0')}</span></span><button type="button" class="quiz-exit" id="quiz-exit">Salir</button></div><div class="quiz-progress"><span style="width:${progress}%"></span></div><h2>${escapeHtml(q.prompt)}</h2><div class="quiz-options" role="group" aria-label="Opciones de respuesta">${q.choices.map((choice, index) => `<button class="quiz-option ${quizSession.selected === index ? 'selected' : ''}" type="button" data-answer="${index}" ${quizSession.answered ? 'disabled' : ''}><span class="option-key">${String.fromCharCode(65 + index)}</span><span>${escapeHtml(choice)}</span><span class="option-state" aria-hidden="true">${quizSession.answered && index === q.answer ? '✓' : quizSession.answered && index === quizSession.selected ? '×' : ''}</span></button>`).join('')}</div>${quizSession.answered ? `<div class="answer-feedback ${quizSession.selected === q.answer ? 'correct' : 'incorrect'}"><strong>${quizSession.selected === q.answer ? '¡Muy bien!' : 'Sigue aprendiendo'}</strong><p>${escapeHtml(q.explanation)}</p><button class="text-link" type="button" data-review="${q.lesson}">Repasar esta lección <span aria-hidden="true">↗</span></button></div>` : '<p class="answer-hint">Elige una opción para responder.</p>'}<div class="quiz-actions">${quizSession.answered ? `<button class="button button-dark" type="button" id="quiz-next">${quizSession.index === total - 1 ? 'Ver resultado' : 'Siguiente pregunta'} <span aria-hidden="true">→</span></button>` : `<button class="button button-dark" type="button" id="quiz-submit" ${quizSession.selected === null ? 'disabled' : ''}>Comprobar respuesta <span aria-hidden="true">→</span></button>`}</div></div>`;
+    $('#trivia-card').innerHTML = `<div class="trivia-question"><div class="quiz-topline"><span class="eyebrow">${quizSession.mode === 'bonus' ? 'RETO RELÁMPAGO' : 'PREGUNTA'} ${String(quizSession.index + 1).padStart(2, '0')} <span class="muted">/ ${String(total).padStart(2, '0')}</span></span><button type="button" class="quiz-exit" id="quiz-exit">Salir</button></div><div class="quiz-progress"><span style="width:${progress}%"></span></div><h2>${escapeHtml(q.prompt)}</h2><div class="quiz-options" role="group" aria-label="Opciones de respuesta">${q.options.map((option, index) => `<button class="quiz-option ${quizSession.selected === option.id ? 'selected' : ''}" type="button" data-answer="${escapeHtml(option.id)}" ${quizSession.answered ? 'disabled' : ''}><span class="option-key">${String.fromCharCode(65 + index)}</span><span>${escapeHtml(option.text)}</span><span class="option-state" aria-hidden="true">${quizSession.answered && option.id === q.correctOptionId ? '✓' : quizSession.answered && option.id === quizSession.selected ? '×' : ''}</span></button>`).join('')}</div>${quizSession.answered ? `<div class="answer-feedback ${questionUtils.isCorrectOption(q, quizSession.selected) ? 'correct' : 'incorrect'}"><strong>${questionUtils.isCorrectOption(q, quizSession.selected) ? '¡Muy bien!' : 'Sigue aprendiendo'}</strong><p>${escapeHtml(q.explanation)}</p><button class="text-link" type="button" data-review="${q.lesson}">Repasar esta lección <span aria-hidden="true">↗</span></button></div>` : '<p class="answer-hint">Elige una opción para responder.</p>'}<div class="quiz-actions">${quizSession.answered ? `<button class="button button-dark" type="button" id="quiz-next">${quizSession.index === total - 1 ? 'Ver resultado' : 'Siguiente pregunta'} <span aria-hidden="true">→</span></button>` : `<button class="button button-dark" type="button" id="quiz-submit" ${quizSession.selected === null ? 'disabled' : ''}>Comprobar respuesta <span aria-hidden="true">→</span></button>`}</div></div>`;
   }
   function finishQuiz() {
     const score = quizSession.score;
@@ -486,6 +496,7 @@
       renderLessonGroups();
     }
     dialogLesson = id;
+    lessonOptionOrder = questionUtils.shuffleOptions(lesson.question.options);
     renderLessonDialog(lesson);
     renderBatteryStatus();
     const dialog = $('#lesson-dialog');
@@ -497,9 +508,9 @@
     const savedAnswer = state.lessonAnswers?.[lesson.id];
     const selected = savedAnswer && typeof savedAnswer === 'object' ? savedAnswer.selected : null;
     const answered = Boolean(savedAnswer && typeof savedAnswer === 'object' && savedAnswer.checked);
-    const feedback = answered ? `<div class="lesson-answer-feedback ${selected === lesson.question.correct ? 'correct' : 'incorrect'}"><strong>${selected === lesson.question.correct ? '¡Correcto!' : 'Vuelve a intentarlo'}</strong><p>${escapeHtml(lesson.question.feedback)}</p></div>` : '';
+    const feedback = answered ? `<div class="lesson-answer-feedback ${questionUtils.isCorrectOption(lesson.question, selected) ? 'correct' : 'incorrect'}"><strong>${questionUtils.isCorrectOption(lesson.question, selected) ? '¡Correcto!' : 'Vuelve a intentarlo'}</strong><p>${escapeHtml(lesson.question.feedback)}</p></div>` : '';
     const completed = state.completed.includes(lesson.id);
-      $('#lesson-dialog-content').innerHTML = `<article class="lesson-detail"><div class="lesson-detail-image"><img src="${escapeHtml(lesson.image.src)}" alt="${escapeHtml(lesson.image.alt)}" onerror="this.closest('.lesson-detail-image').classList.add('image-missing');this.remove()"><span class="detail-image-caption"><a href="${escapeHtml(lesson.image.href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(lesson.image.caption)} ↗</a></span></div><div class="lesson-detail-copy"><div class="lesson-meta"><span>${escapeHtml(categoryMap[lesson.category].title)}</span><span>·</span><span>${escapeHtml(lesson.region)}</span><span>·</span><span>${lesson.duration}</span></div><h1 id="lesson-dialog-title">${escapeHtml(lesson.title)}</h1><div class="objective-box"><span class="objective-icon" aria-hidden="true">◎</span><div><strong>Al terminar podrás</strong><p>${escapeHtml(lesson.objective)}</p></div></div><p class="lesson-intro">${escapeHtml(lesson.intro)}</p><div class="lesson-sections">${lesson.sections.map((section, index) => `<section><span class="section-number">0${index + 1}</span><div><h2>${escapeHtml(section.heading)}</h2><p>${escapeHtml(section.body)}</p></div></section>`).join('')}</div><aside class="cultural-fact"><span aria-hidden="true">✦</span><div><strong>Dato cultural</strong><p>${escapeHtml(lesson.fact)}</p></div></aside><section class="comprehension"><p class="eyebrow">COMPRUEBA LO APRENDIDO</p><h2>${escapeHtml(lesson.question.text)}</h2><div class="comprehension-options">${lesson.question.options.map((option, index) => `<button class="comprehension-option ${selected === index ? 'selected' : ''} ${answered && selected === lesson.question.correct && index === lesson.question.correct ? 'correct' : answered && selected === index && selected !== lesson.question.correct ? 'incorrect' : ''}" type="button" data-comprehension="${index}" aria-pressed="${selected === index}"><span>${String.fromCharCode(65 + index)}</span>${escapeHtml(option)}</button>`).join('')}</div>${feedback}<button class="button button-outline" type="button" id="check-comprehension" ${selected === null || answered ? 'disabled' : ''}>Comprobar respuesta</button></section><div class="lesson-complete-row"><button class="button button-dark" type="button" id="mark-complete" ${completed ? 'disabled' : !answered || selected !== lesson.question.correct ? 'disabled' : ''}>${completed ? '✓ Lección completada' : 'Marcar como completada'}</button><span>${completed ? 'Puedes repetirla cuando quieras, sin gastar baterías.' : selected === lesson.question.correct && answered ? '¡Respuesta correcta! Ya puedes completar la lección.' : 'Responde correctamente para completar esta lección.'}</span></div></div></article>`;
+      $('#lesson-dialog-content').innerHTML = `<article class="lesson-detail"><div class="lesson-detail-image"><img src="${escapeHtml(lesson.image.src)}" alt="${escapeHtml(lesson.image.alt)}" onerror="this.closest('.lesson-detail-image').classList.add('image-missing');this.remove()"><span class="detail-image-caption"><a href="${escapeHtml(lesson.image.href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(lesson.image.caption)} ↗</a></span></div><div class="lesson-detail-copy"><div class="lesson-meta"><span>${escapeHtml(categoryMap[lesson.category].title)}</span><span>·</span><span>${escapeHtml(lesson.region)}</span><span>·</span><span>${lesson.duration}</span></div><h1 id="lesson-dialog-title">${escapeHtml(lesson.title)}</h1><div class="objective-box"><span class="objective-icon" aria-hidden="true">◎</span><div><strong>Al terminar podrás</strong><p>${escapeHtml(lesson.objective)}</p></div></div><p class="lesson-intro">${escapeHtml(lesson.intro)}</p><div class="lesson-sections">${lesson.sections.map((section, index) => `<section><span class="section-number">0${index + 1}</span><div><h2>${escapeHtml(section.heading)}</h2><p>${escapeHtml(section.body)}</p></div></section>`).join('')}</div><aside class="cultural-fact"><span aria-hidden="true">✦</span><div><strong>Dato cultural</strong><p>${escapeHtml(lesson.fact)}</p></div></aside><section class="comprehension"><p class="eyebrow">COMPRUEBA LO APRENDIDO</p><h2>${escapeHtml(lesson.question.text)}</h2><div class="comprehension-options">${lessonOptionOrder.map((option, index) => `<button class="comprehension-option ${selected === option.id ? 'selected' : ''} ${answered && questionUtils.isCorrectOption(lesson.question, selected) && option.id === selected ? 'correct' : answered && option.id === selected && !questionUtils.isCorrectOption(lesson.question, selected) ? 'incorrect' : ''}" type="button" data-comprehension="${escapeHtml(option.id)}" aria-pressed="${selected === option.id}"><span>${String.fromCharCode(65 + index)}</span>${escapeHtml(option.text)}</button>`).join('')}</div>${feedback}<button class="button button-outline" type="button" id="check-comprehension" ${selected === null || answered ? 'disabled' : ''}>Comprobar respuesta</button></section><div class="lesson-complete-row"><button class="button button-dark" type="button" id="mark-complete" ${completed ? 'disabled' : !answered || !questionUtils.isCorrectOption(lesson.question, selected) ? 'disabled' : ''}>${completed ? '✓ Lección completada' : 'Marcar como completada'}</button><span>${completed ? 'Puedes repetirla cuando quieras, sin gastar baterías.' : questionUtils.isCorrectOption(lesson.question, selected) && answered ? '¡Respuesta correcta! Ya puedes completar la lección.' : 'Responde correctamente para completar esta lección.'}</span></div></div></article>`;
   }
 
   function showNotice(title, copy) {
@@ -550,9 +561,9 @@
       saveState(); renderProgress(); renderBatteryStatus(); renderHome(); renderLessonGroups(); renderQuizIntro(); showNotice('Plan de demostración activado', `${nextPlan.name} está activo en esta demostración. No se realizó ningún cobro ni se solicitaron datos bancarios.`); return;
     }
     const answer = event.target.closest('[data-answer]');
-    if (answer && quizSession && !quizSession.answered) { quizSession.selected = Number(answer.dataset.answer); renderQuizQuestion(); return; }
+    if (answer && quizSession && !quizSession.answered) { quizSession.selected = answer.dataset.answer; renderQuizQuestion(); return; }
     const lessonAnswer = event.target.closest('[data-comprehension]');
-    if (lessonAnswer && dialogLesson) { state.lessonAnswers = state.lessonAnswers || {}; state.lessonAnswers[dialogLesson] = { selected: Number(lessonAnswer.dataset.comprehension), checked: false }; saveState(); renderLessonDialog(lessonMap[dialogLesson]); return; }
+    if (lessonAnswer && dialogLesson) { state.lessonAnswers = state.lessonAnswers || {}; state.lessonAnswers[dialogLesson] = { selected: lessonAnswer.dataset.comprehension, checked: false }; saveState(); renderLessonDialog(lessonMap[dialogLesson]); return; }
     const review = event.target.closest('[data-review]');
     if (review) { if (quizSession) { quizSession = null; renderQuizIntro(); } openLessonFromCurrent(review.dataset.review); return; }
     const practiceLink = event.target.closest('[data-open-practice]');
@@ -573,14 +584,14 @@
     if (event.target.closest('#start-bonus') && (state.plan === 'plus' || state.plan === 'premium')) { startQuiz('bonus'); return; }
     if (event.target.closest('#quiz-submit') && quizSession && quizSession.selected !== null) {
       quizSession.answered = true;
-      if (quizSession.selected === quizSession.questions[quizSession.index].answer) quizSession.score += 1;
+      quizSession.score = questionUtils.nextScore(quizSession.score, quizSession.questions[quizSession.index], quizSession.selected);
       renderQuizQuestion(); return;
     }
     if (event.target.closest('#quiz-next') && quizSession) { if (quizSession.index === quizSession.questions.length - 1) finishQuiz(); else { quizSession.index += 1; quizSession.selected = null; quizSession.answered = false; renderQuizQuestion(); } return; }
     if (event.target.closest('#quiz-exit')) { quizSession = null; renderQuizIntro(); return; }
     if (event.target.closest('#retry-quiz')) { const retry = event.target.closest('#retry-quiz'); startQuiz(retry.dataset.mode || 'main', retry.dataset.category || null); return; }
-    if (event.target.closest('#check-comprehension') && dialogLesson) { const saved = state.lessonAnswers?.[dialogLesson]; if (saved && typeof saved === 'object') saved.checked = true; saveState(); renderLessonDialog(lessonMap[dialogLesson]); announce(saved?.selected === lessonMap[dialogLesson].question.correct ? 'Respuesta correcta.' : 'Respuesta incorrecta. Revisa la explicación y vuelve a intentarlo.'); return; }
-    if (event.target.closest('#mark-complete') && dialogLesson) { const saved = state.lessonAnswers?.[dialogLesson]; if (saved?.checked && saved.selected === lessonMap[dialogLesson].question.correct && !state.completed.includes(dialogLesson)) { state.completed.push(dialogLesson); saveState(); recordActivity(`lesson-${dialogLesson}`, 10); renderLessonDialog(lessonMap[dialogLesson]); renderHome(); renderLessonGroups(); renderAreaViews(); renderProgress(); const node = $(`.route-node[data-lesson="${dialogLesson}"]`); if (node) { node.classList.add('celebrate'); window.setTimeout(() => node.classList.remove('celebrate'), 650); } announce('¡Lección completada! Tu progreso se guardó.'); } else announce('Primero responde correctamente la pregunta.'); return; }
+    if (event.target.closest('#check-comprehension') && dialogLesson) { const saved = state.lessonAnswers?.[dialogLesson]; if (saved && typeof saved === 'object') saved.checked = true; saveState(); renderLessonDialog(lessonMap[dialogLesson]); announce(questionUtils.isCorrectOption(lessonMap[dialogLesson].question, saved?.selected) ? 'Respuesta correcta.' : 'Respuesta incorrecta. Revisa la explicación y vuelve a intentarlo.'); return; }
+    if (event.target.closest('#mark-complete') && dialogLesson) { const saved = state.lessonAnswers?.[dialogLesson]; if (saved?.checked && questionUtils.isCorrectOption(lessonMap[dialogLesson].question, saved.selected) && !state.completed.includes(dialogLesson)) { state.completed.push(dialogLesson); saveState(); recordActivity(`lesson-${dialogLesson}`, 10); renderLessonDialog(lessonMap[dialogLesson]); renderHome(); renderLessonGroups(); renderAreaViews(); renderProgress(); const node = $(`.route-node[data-lesson="${dialogLesson}"]`); if (node) { node.classList.add('celebrate'); window.setTimeout(() => node.classList.remove('celebrate'), 650); } announce('¡Lección completada! Tu progreso se guardó.'); } else announce('Primero responde correctamente la pregunta.'); return; }
     if (event.target.closest('#close-lesson')) { closeLesson(); return; }
     if (event.target.closest('#close-notice')) { $('#notice-dialog').close(); return; }
     if (event.target.closest('#battery-info')) { showNotice('¿Cómo funcionan las baterías?', 'Una batería se usa al iniciar por primera vez una lección. No se vuelve a cobrar al actualizar, reabrir o repetir una lección ya iniciada o completada. La recarga completa ocurre 24 horas después del primer uso. La trivia no utiliza baterías.'); return; }
