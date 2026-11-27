@@ -27,5 +27,35 @@
     return selectedIndex === 0 ? question?.correctOptionId ?? null : null;
   }
 
-  window.QR_QUESTION_UTILS = { shuffleOptions, prepareQuestions, isCorrectOption, nextScore, migrateLegacySelection };
+  function registerLessonAttempt(previous = {}, question, optionId) {
+    const attempts = Number.isSafeInteger(previous.attempts) && previous.attempts >= 0 ? previous.attempts : 0;
+    const correct = isCorrectOption(question, optionId);
+    return {
+      ...previous,
+      selected: optionId,
+      checked: true,
+      attempts: attempts + 1,
+      firstAttemptCorrect: attempts === 0 ? correct : previous.firstAttemptCorrect === true
+    };
+  }
+
+  function unlockLessonRetry(previous = {}) {
+    return { ...previous, selected: null, checked: false };
+  }
+
+  function updateTriviaRecords(firstAttemptScore, bestPracticeScore, score) {
+    return {
+      firstAttemptScore: Number.isInteger(firstAttemptScore) ? firstAttemptScore : score,
+      bestPracticeScore: Number.isInteger(bestPracticeScore) ? Math.max(bestPracticeScore, score) : score
+    };
+  }
+
+  function validScore(value, total) {
+    return Number.isInteger(value) && value >= 0 && value <= total ? value : null;
+  }
+
+  window.QR_QUESTION_UTILS = {
+    shuffleOptions, prepareQuestions, isCorrectOption, nextScore, migrateLegacySelection,
+    registerLessonAttempt, unlockLessonRetry, updateTriviaRecords, validScore
+  };
 })();

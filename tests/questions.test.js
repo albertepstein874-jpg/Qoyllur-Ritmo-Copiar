@@ -8,7 +8,7 @@ const root = path.resolve(__dirname, '..');
 const sandbox = { window: {} };
 vm.runInNewContext(fs.readFileSync(path.join(root, 'js/question-utils.js'), 'utf8'), sandbox);
 vm.runInNewContext(fs.readFileSync(path.join(root, 'js/content.js'), 'utf8'), sandbox);
-const { shuffleOptions, prepareQuestions, isCorrectOption, nextScore, migrateLegacySelection } = sandbox.window.QR_QUESTION_UTILS;
+const { shuffleOptions, prepareQuestions, isCorrectOption, nextScore, migrateLegacySelection, registerLessonAttempt, unlockLessonRetry, updateTriviaRecords, validScore } = sandbox.window.QR_QUESTION_UTILS;
 const content = sandbox.window.QR_CONTENT;
 const lessonQuestions = content.lessons.map(lesson => ({ id: lesson.id, ...lesson.question }));
 const allQuestions = [...lessonQuestions, ...content.trivia];
@@ -53,7 +53,7 @@ test('la aleatorización conserva la respuesta correcta y puede ubicarla en cada
     }
     assert.deepEqual([...positions].sort(), [0, 1, 2], question.text || question.prompt);
   }
-  assert.deepEqual(Array.from(content.trivia[0].options, option => option.id), ['lima', 'puno', 'lamas']);
+  assert.equal(content.trivia[0].id, 'trivia-marinera-localidad');
 });
 
 test('la puntuación solo suma al ID correcto y cada nuevo intento crea una sesión de opciones independiente', () => {
@@ -84,14 +84,55 @@ test('la migración conserva respuestas correctas antiguas por ID y descarta sel
   assert.equal(migrateLegacySelection(question, 'lamas'), 'lamas');
 });
 
+test('las ocho preguntas de trivia tienen identificadores estables y solo tres están marcadas para el reto extra', () => {
+  const ids = content.trivia.map(question => question.id);
+  assert.equal(new Set(ids).size, 8);
+  assert.ok(ids.every(id => /^trivia-[a-z0-9-]+$/.test(id)));
+  assert.deepEqual(Array.from(content.trivia.filter(question => question.bonusEligible), question => question.id), [
+    'trivia-tijeras-objeto', 'trivia-sikuris-colectivo', 'trivia-cajon-generos'
+  ]);
+});
+
+test('el primer intento de lección queda fijo mientras se permiten reintentos', () => {
+  const question = content.lessons[0].question;
+  const wrong = question.options.find(option => option.id !== question.correctOptionId).id;
+  const first = registerLessonAttempt({}, question, wrong);
+  assert.equal(first.firstAttemptCorrect, false);
+  assert.equal(first.attempts, 1);
+  const retry = unlockLessonRetry(first);
+  assert.equal(retry.selected, null);
+  assert.equal(retry.checked, false);
+  const second = registerLessonAttempt(retry, question, question.correctOptionId);
+  assert.equal(second.firstAttemptCorrect, false);
+  assert.equal(second.attempts, 2);
+  const firstCorrect = registerLessonAttempt({}, question, question.correctOptionId);
+  assert.equal(firstCorrect.firstAttemptCorrect, true);
+});
+
+test('primera evaluación y récord de práctica se guardan como valores separados y validados', () => {
+  const records = (...args) => JSON.parse(JSON.stringify(updateTriviaRecords(...args)));
+  assert.deepEqual(records(null, null, 0), { firstAttemptScore: 0, bestPracticeScore: 0 });
+  assert.deepEqual(records(0, 4, 3), { firstAttemptScore: 0, bestPracticeScore: 4 });
+  assert.deepEqual(records(0, 4, 7), { firstAttemptScore: 0, bestPracticeScore: 7 });
+  assert.equal(validScore(8, 8), 8);
+  assert.equal(validScore(9, 8), null);
+  assert.equal(validScore(-1, 8), null);
+});
+
 test('la interfaz compara IDs estables para seleccionar, retroalimentar y puntuar', () => {
   const script = fs.readFileSync(path.join(root, 'js/script.js'), 'utf8');
   assert.match(script, /questionUtils\.prepareQuestions\(questions\)/);
   assert.match(script, /quizSession\.selected = answer\.dataset\.answer/);
   assert.match(script, /questionUtils\.nextScore\(/);
-  assert.match(script, /questionUtils\.migrateLegacySelection\(question, answer\.selected\)/);
+  assert.match(script, /questionUtils\.migrateLegacySelection\(question, legacySelection\)/);
   assert.match(script, /quizSession\.selected === option\.id/);
   assert.match(script, /selected === option\.id/);
-  assert.match(script, /questionUtils\.isCorrectOption\(lessonMap\[dialogLesson\]\.question, saved\?\.selected\)/);
+  assert.match(script, /questionUtils\.isCorrectOption\(lesson\.question, checked\.selected\)/);
+  assert.match(script, /if \(quizSession\.answered\) return/);
+  assert.match(script, /quizSession\.answers\.push\(/);
+  assert.match(script, /state\.quizAwards\?\.\[awardKey\] !== true/);
+  const renderer = script.slice(script.indexOf('function renderQuizQuestion('), script.indexOf('function finishQuiz('));
+  assert.doesNotMatch(renderer, /q\.explanation|q\.correctOptionId/);
+  assert.match(script, /data-review="\$\{escapeHtml\(item\.lesson\)\}"/);
   assert.doesNotMatch(script, /q\.choices|q\.answer|lesson\.question\.correct/);
 });

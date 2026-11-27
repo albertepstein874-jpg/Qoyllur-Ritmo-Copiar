@@ -1,6 +1,6 @@
 # Créditos de imágenes
 
-La primera versión muestra imágenes remotas; no se han copiado archivos de imagen al proyecto. Los créditos también aparecen junto a cada fotografía en la interfaz.
+La mayoría de las fotografías se cargan desde sus páginas de procedencia. El proyecto incluye además la ilustración local de la vicuña guía. Los créditos de las fotografías aparecen junto a cada imagen en la interfaz.
 
 | Lección | Fotografía / autoría | Uso y fuente |
 | --- | --- | --- |
@@ -11,6 +11,7 @@ La primera versión muestra imágenes remotas; no se han copiado archivos de ima
 | Cajón peruano | SLR | [Wikimedia Commons, CC BY 3.0](https://commons.wikimedia.org/wiki/File:Cajon_peruano._Instrumento_de_percusi%C3%B3n.JPG). |
 | Esuwa | Documentación fotográfica de UNESCO | [Ficha de Esuwa](https://ich.unesco.org/es/USL/esuwa-canticos-sagrados-de-los-harakbut-del-pueblo-wachiperi-en-peru-00531). La imagen se enlaza desde la ficha; no se indica una licencia abierta en la ficha. |
 | Hero de Inicio: Machu Picchu | Brian Jeffery Beggerly | [Wikimedia Commons, CC BY 2.0](https://commons.wikimedia.org/wiki/File:Machu_Picchu_panorama.jpg). |
+| Vicuña guía de Aprendizaje | Imagen generada con OpenAI ImageGen para el prototipo de Qoyllur Ritmo | Ilustración generada para esta interfaz y guardada localmente en `imagenes/vicuna-guia.png`; no es una fotografía documental. |
 | Hero de Inicio: bandera peruana en Aguas Calientes | EASLYHAKS | [Wikimedia Commons, CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Flag_in_Aguas_Calientes.jpg). |
 | Acceso: Gastronomía | Manuel González Olaechea y Franco | [Ceviche del Perú, Wikimedia Commons, CC BY 3.0](https://commons.wikimedia.org/wiki/File:Ceviche_del_Per%C3%BA.jpg). |
 | Acceso: Festividades | Cyntia Motta | [Inti Raymi, Wikimedia Commons, CC BY-SA 3.0](https://commons.wikimedia.org/wiki/File:Inti_Raymi.jpg). |
@@ -18,3 +19,17 @@ La primera versión muestra imágenes remotas; no se han copiado archivos de ima
 | Acceso: Historia y tradiciones | Pethrus | [Traditionnal peruvian weaving - Cuzco - Peru, Wikimedia Commons, CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Traditionnal_peruvian_weaving_-_Cuzco_-_Peru.jpg). |
 
 Las imágenes con licencia Creative Commons conservan su atribución. Las fotografías de Lamas y Esuwa se cargan desde sus páginas de procedencia y se muestran con crédito visible.
+
+## Fotografías del prototipo de recorrido
+
+| Pantalla | Fotografía / autoría | Uso y fuente |
+| --- | --- | --- |
+| Portada panorámica | Brian Jeffery Beggerly | [Machu Picchu panorama, Wikimedia Commons, CC BY 2.0](https://commons.wikimedia.org/wiki/File:Machu_Picchu_panorama.jpg). |
+| Nivel de danzas: marinera | Mcjv0900 | [Marinera Peruana, Wikimedia Commons, CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Marinera_Peruana.jpg). |
+| Nivel de danzas: tijeras | Almendra Bazan | [Danza de las Tijeras, Wikimedia Commons, CC0](https://commons.wikimedia.org/wiki/File:Danza_de_las_Tijeras.jpg). |
+| Nivel de danzas: Hatajo | Andresestebanpro | [Atajo de los negritos, Wikimedia Commons, CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Atajo_de_los_negritos.jpg). |
+| Nivel de música: sikuris | Abelchristian111 | [Agrupación Cultural de Sikuris Claveles Rojos de Huancané, Wikimedia Commons, CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Agrupaci%C3%B3n_Cultural_de_Sikuris_Claveles_Rojos_de_Huancan%C3%A9_-_M%C3%BAsicos.jpg). |
+| Nivel de música: cajón | SLR | [Cajón peruano, Wikimedia Commons, CC BY 3.0](https://commons.wikimedia.org/wiki/File:Cajon_peruano._Instrumento_de_percusi%C3%B3n.JPG). |
+| Nivel de música: quena | Aurogallego | [Quena, Wikimedia Commons, CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Quena.jpg). |
+
+Las fotografías de terceros enlazan a sus fichas de atribución. Las tarjetas no alteran ni amplían el contenido de las lecciones.
